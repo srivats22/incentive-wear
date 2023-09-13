@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">IncentiveWear</string>
+    <string name="app_label">Incentive</string>
+    <string name="app_desc">Wear OS Companion App</string>
+    <string name="account_warning">You must already have an incentive account</string>
+    <string name="title_activity_setup">SetupActivity</string>
+</resources>

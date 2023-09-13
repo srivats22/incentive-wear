@@ -1,0 +1,119 @@
+{
+  "project_info": {
+    "project_number": "474887074959",
+    "firebase_url": "https://todo-incentive.firebaseio.com",
+    "project_id": "todo-incentive",
+    "storage_bucket": "todo-incentive.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474887074959:android:4fe4f0152530b500a6acfa",
+        "android_client_info": {
+          "package_name": "com.experiment.srivats.incentivewear"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474887074959-j8crdecm62p7v0n39d5airv6pckdsc2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkuIDjo0q6-qRwd0FAXKwoYm5tlYa4-NA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474887074959-j8crdecm62p7v0n39d5airv6pckdsc2a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "474887074959-72mjhfcaa5dvik66ggcch3boa32q1uhq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.srivats.todoincentive.incentiveFlutter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474887074959:android:f0960c184ed418cba6acfa",
+        "android_client_info": {
+          "package_name": "com.experiments.srivats.chaty_task"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474887074959-j8crdecm62p7v0n39d5airv6pckdsc2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkuIDjo0q6-qRwd0FAXKwoYm5tlYa4-NA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474887074959-j8crdecm62p7v0n39d5airv6pckdsc2a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "474887074959-72mjhfcaa5dvik66ggcch3boa32q1uhq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.srivats.todoincentive.incentiveFlutter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:474887074959:android:9b74b2243b86c9c4a6acfa",
+        "android_client_info": {
+          "package_name": "com.srivats.todoincentive"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "474887074959-j8crdecm62p7v0n39d5airv6pckdsc2a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkuIDjo0q6-qRwd0FAXKwoYm5tlYa4-NA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "474887074959-j8crdecm62p7v0n39d5airv6pckdsc2a.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "474887074959-72mjhfcaa5dvik66ggcch3boa32q1uhq.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.srivats.todoincentive.incentiveFlutter"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
