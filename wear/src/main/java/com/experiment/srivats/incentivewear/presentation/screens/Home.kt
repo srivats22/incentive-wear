@@ -1,6 +1,6 @@
 package com.experiment.srivats.incentivewear.presentation.screens
 
-import androidx.compose.foundation.background
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,26 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.CalendarToday
 import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Task
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
-import androidx.wear.compose.material.Chip
-import androidx.wear.compose.material.ChipColors
-import androidx.wear.compose.material.ChipDefaults
-import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
@@ -37,9 +30,13 @@ import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.scrollAway
 import com.experiment.srivats.incentivewear.presentation.common.AppChip
+import com.experiment.srivats.incentivewear.presentation.helper.user.UserStore
 
 @Composable
 fun HomeView(navController: NavController){
+    val mContext = LocalContext.current
+    val store = UserStore(mContext)
+    Log.d("User Id", store.getAccessToken.collectAsState(initial = "").value)
     val listState = rememberScalingLazyListState()
     val contentModifier = Modifier
         .fillMaxWidth()

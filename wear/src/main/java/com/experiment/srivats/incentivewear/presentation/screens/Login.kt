@@ -3,7 +3,6 @@ package com.experiment.srivats.incentivewear.presentation.screens
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,15 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,8 +44,12 @@ import androidx.wear.compose.material.TimeText
 import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import com.experiment.srivats.incentivewear.presentation.BASE_URL
-import com.experiment.srivats.incentivewear.presentation.helper.ApiDataModelItem
-import com.experiment.srivats.incentivewear.presentation.helper.ApiInterface
+import com.experiment.srivats.incentivewear.presentation.helper.user.UserDataModelItem
+import com.experiment.srivats.incentivewear.presentation.helper.user.UserInterface
+import com.experiment.srivats.incentivewear.presentation.helper.user.UserStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -64,7 +64,6 @@ fun LoginView(navController: NavController){
     ) {
         var text by rememberSaveable { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
-        val focusRequester = FocusRequester()
         val context = LocalContext.current
 
         Column(
@@ -123,6 +122,7 @@ fun LoginView(navController: NavController){
 }
 
 fun  loginCall(mContext: Context, passedUUID: String, navController: NavController){
+    val store = UserStore(mContext)
     if(passedUUID.isEmpty()){
         Toast.makeText(mContext, "Enter Code", Toast.LENGTH_LONG).show()
     }
@@ -130,24 +130,34 @@ fun  loginCall(mContext: Context, passedUUID: String, navController: NavControll
         .addConverterFactory(GsonConverterFactory.create())
         .baseUrl(BASE_URL)
         .build()
-        .create(ApiInterface::class.java)
+        .create(UserInterface::class.java)
 
     val retrofitData = retrofitBuilder.getData(passedUUID)
 
-    retrofitData.enqueue(object : Callback<List<ApiDataModelItem>?> {
+    retrofitData.enqueue(object : Callback<List<UserDataModelItem>?> {
         override fun onResponse(
-            call: Call<List<ApiDataModelItem>?>,
-            response: Response<List<ApiDataModelItem>?>,
+            call: Call<List<UserDataModelItem>?>,
+            response: Response<List<UserDataModelItem>?>,
         ) {
+            val respBody = response.body()!!
+            var userUid  = ""
+            for(rb in respBody){
+                userUid = rb.uid
+            }
             val sharedPreferences =
                 mContext.applicationContext.getSharedPreferences("isUserLoggedIn", Context.MODE_PRIVATE)
             val editor = sharedPreferences.edit()
             editor.putString("isLoggedIn", "loggedIn")
+            editor.putString("userUid", userUid)
             editor.apply()
+            CoroutineScope(Dispatchers.IO).launch {
+                store.saveAuthState(true)
+                store.saveToken(userUid)
+            }
             navController.navigate("Home")
         }
 
-        override fun onFailure(call: Call<List<ApiDataModelItem>?>, t: Throwable) {
+        override fun onFailure(call: Call<List<UserDataModelItem>?>, t: Throwable) {
             Toast.makeText(mContext, "An Error Occurred, Try Again", Toast.LENGTH_LONG).show()
             Log.d("Error",t.message.toString())
         }
