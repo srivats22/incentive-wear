@@ -2,6 +2,7 @@ package com.experiment.srivats.incentivewear.presentation.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
@@ -36,7 +37,7 @@ fun AppChip(modifier: Modifier = Modifier,
             )
         },
         colors = ChipDefaults.chipColors(
-            backgroundColor = MaterialTheme.colors.secondary
+            backgroundColor = Color.DarkGray,
         )
     )
 

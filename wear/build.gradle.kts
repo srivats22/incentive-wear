@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -70,6 +71,10 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences-rxjava2:1.0.0")
     implementation("androidx.datastore:datastore-preferences-rxjava3:1.0.0")
     implementation("androidx.core:core-splashscreen:1.1.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0-alpha02")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0-alpha02")
+    implementation("com.google.firebase:firebase-firestore-ktx:24.8.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.03.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")

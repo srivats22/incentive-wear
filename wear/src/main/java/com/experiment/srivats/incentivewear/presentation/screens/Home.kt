@@ -1,5 +1,6 @@
 package com.experiment.srivats.incentivewear.presentation.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,15 +13,26 @@ import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Task
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
@@ -30,14 +42,16 @@ import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.scrollAway
 import com.experiment.srivats.incentivewear.presentation.common.AppChip
+import com.experiment.srivats.incentivewear.presentation.helper.CurrVMFactory
+import com.experiment.srivats.incentivewear.presentation.helper.tasks.TaskModelItem
 import com.experiment.srivats.incentivewear.presentation.helper.user.UserStore
+import com.experiment.srivats.incentivewear.presentation.helper.vm.CurrVM
+import kotlinx.coroutines.launch
 
 @Composable
-fun HomeView(navController: NavController){
-    val mContext = LocalContext.current
-    val store = UserStore(mContext)
-    Log.d("User Id", store.getAccessToken.collectAsState(initial = "").value)
+fun HomeView(navController: NavController, userId: String){
     val listState = rememberScalingLazyListState()
+    var isLoading: Boolean by remember{mutableStateOf(false)}
     val contentModifier = Modifier
         .fillMaxWidth()
         .padding(bottom = 8.dp)
@@ -60,50 +74,55 @@ fun HomeView(navController: NavController){
             autoCentering = AutoCenteringParams(itemIndex = 0),
             state = listState
         ) {
-            item {
-                Text("Incentive",
-                    style = MaterialTheme.typography.display3
-                )
+            if(isLoading){
+                item { CircularProgressIndicator() }
             }
-            item {
-                AppChip(
-                    modifier = contentModifier,
-                    iconModifier = iconModifier,
-                    chipTitle = "Today's Task",
-                    chipIcon = Icons.Rounded.Task,
-                    navController = navController,
-                    destination = "currTask"
-                )
-            }
-            item {
-                AppChip(
-                    modifier = contentModifier,
-                    iconModifier = iconModifier,
-                    chipTitle = "Pending Task",
-                    chipIcon = Icons.Rounded.PendingActions,
-                    navController = navController,
-                    destination = "pendingTask"
-                )
-            }
-            item {
-                AppChip(
-                    modifier = contentModifier,
-                    iconModifier = iconModifier,
-                    chipTitle = "Planned Task",
-                    chipIcon = Icons.Rounded.Task,
-                    navController = navController,
-                    destination = "plannedTask"
-                )
-            }
-            item {
-                AppChip(
-                    modifier = contentModifier,
-                    iconModifier = iconModifier,
-                    chipTitle = "Settings",
-                    chipIcon = Icons.Rounded.Settings,
-                    navController = navController,
-                    destination = "settings"
-                )
+            else{
+                item {
+                    Text("Incentive",
+                        style = MaterialTheme.typography.display3
+                    )
+                }
+                item {
+                    AppChip(
+                        modifier = contentModifier,
+                        iconModifier = iconModifier,
+                        chipTitle = "Today's Task",
+                        chipIcon = Icons.Rounded.Task,
+                        navController = navController,
+                        destination = "currTask"
+                    )
+                }
+                item {
+                    AppChip(
+                        modifier = contentModifier,
+                        iconModifier = iconModifier,
+                        chipTitle = "Pending Task",
+                        chipIcon = Icons.Rounded.PendingActions,
+                        navController = navController,
+                        destination = "pendingTask"
+                    )
+                }
+                item {
+                    AppChip(
+                        modifier = contentModifier,
+                        iconModifier = iconModifier,
+                        chipTitle = "Planned Task",
+                        chipIcon = Icons.Rounded.Task,
+                        navController = navController,
+                        destination = "plannedTask"
+                    )
+                }
+                item {
+                    AppChip(
+                        modifier = contentModifier,
+                        iconModifier = iconModifier,
+                        chipTitle = "Settings",
+                        chipIcon = Icons.Rounded.Settings,
+                        navController = navController,
+                        destination = "settings"
+                    )
+                }
             }
         }
     }

@@ -6,15 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.get
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.Text
 import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
@@ -27,6 +25,7 @@ import com.experiment.srivats.incentivewear.presentation.screens.LoginView
 import com.experiment.srivats.incentivewear.presentation.theme.IncentiveWearTheme
 
 class MainActivity : ComponentActivity() {
+    private lateinit var viewModel: CurrVM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -42,9 +41,6 @@ fun WearApp(context: Context) {
     val swipeDismissableNavController = rememberSwipeDismissableNavController()
     val loginState = store.getAuthState.collectAsState(initial = false)
     val userUid = store.getAccessToken.collectAsState(initial = "")
-    val vm: CurrVM = viewModel(factory = viewModelFactory {
-        CurrVMFactory(userUid.value)
-    })
     IncentiveWearTheme {
         SwipeDismissableNavHost(
             navController = swipeDismissableNavController,
@@ -55,10 +51,10 @@ fun WearApp(context: Context) {
                 LoginView(navController = swipeDismissableNavController)
             }
             composable("Home") {
-                HomeView(navController = swipeDismissableNavController)
+                HomeView(navController = swipeDismissableNavController, userId = userUid.value)
             }
             composable("currTask"){
-                CurrTask(navController = swipeDismissableNavController, userId = userUid.value, vm)
+                CurrTask(navController = swipeDismissableNavController, userId = userUid.value)
             }
         }
     }
