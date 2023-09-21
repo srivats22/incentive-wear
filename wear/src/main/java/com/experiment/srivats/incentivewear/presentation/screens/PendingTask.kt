@@ -35,7 +35,7 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun CurrTask(navController: NavController, userId: String){
+fun PendingTask(navController: NavController, userId: String){
     val listState = rememberScalingLazyListState()
     val today = LocalDate.now()
     val formatter = DateTimeFormatter.ofPattern("M-dd-yyy")
@@ -47,7 +47,7 @@ fun CurrTask(navController: NavController, userId: String){
     db.collection("users")
         .document(userId)
         .collection("tasks")
-        .whereEqualTo("due", formattedDate)
+        .whereNotEqualTo("due", formattedDate)
         .get()
         .addOnSuccessListener { result ->
             if(!result.isEmpty){
@@ -86,7 +86,7 @@ fun CurrTask(navController: NavController, userId: String){
                 item{ CircularProgressIndicator() }
             }
             if(isTaskEmpty.value){
-                item { Text("You have no tasks for today") }
+                item { Text("You have no pending tasks") }
             }
             else{
                 itemsIndexed(taskList.distinct()){ index, item ->

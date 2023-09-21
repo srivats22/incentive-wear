@@ -35,19 +35,15 @@ import java.time.format.DateTimeFormatter
 
 
 @Composable
-fun CurrTask(navController: NavController, userId: String){
+fun PlannedTask(navController: NavController, userId: String){
     val listState = rememberScalingLazyListState()
-    val today = LocalDate.now()
-    val formatter = DateTimeFormatter.ofPattern("M-dd-yyy")
-    val formattedDate = formatter.format(today)
     val db = Firebase.firestore
     val taskList = remember { mutableStateListOf<TaskModelItem?>() }
     val isLoading = remember { mutableStateOf(true) }
     val isTaskEmpty = remember { mutableStateOf(false) }
     db.collection("users")
         .document(userId)
-        .collection("tasks")
-        .whereEqualTo("due", formattedDate)
+        .collection("planned")
         .get()
         .addOnSuccessListener { result ->
             if(!result.isEmpty){
@@ -86,7 +82,7 @@ fun CurrTask(navController: NavController, userId: String){
                 item{ CircularProgressIndicator() }
             }
             if(isTaskEmpty.value){
-                item { Text("You have no tasks for today") }
+                item { Text("You have not planned any tasks") }
             }
             else{
                 itemsIndexed(taskList.distinct()){ index, item ->

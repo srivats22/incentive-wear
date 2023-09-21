@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ExitToApp
+import androidx.compose.material.icons.rounded.ExitToApp
 import androidx.compose.material.icons.rounded.PendingActions
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material.icons.rounded.Task
@@ -22,7 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -32,7 +36,10 @@ import androidx.navigation.NavController
 import androidx.wear.compose.foundation.lazy.AutoCenteringParams
 import androidx.wear.compose.foundation.lazy.ScalingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberScalingLazyListState
+import androidx.wear.compose.material.Chip
+import androidx.wear.compose.material.ChipDefaults
 import androidx.wear.compose.material.CircularProgressIndicator
+import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.MaterialTheme
 import androidx.wear.compose.material.PositionIndicator
 import androidx.wear.compose.material.Scaffold
@@ -46,10 +53,15 @@ import com.experiment.srivats.incentivewear.presentation.helper.CurrVMFactory
 import com.experiment.srivats.incentivewear.presentation.helper.tasks.TaskModelItem
 import com.experiment.srivats.incentivewear.presentation.helper.user.UserStore
 import com.experiment.srivats.incentivewear.presentation.helper.vm.CurrVM
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeView(navController: NavController, userId: String){
+    val store = UserStore(LocalContext.current)
+    val loginState = store.getAuthState.collectAsState(initial = false)
+    val dataStoreUserId = store.getAccessToken.collectAsState(initial = "")
     val listState = rememberScalingLazyListState()
     var isLoading: Boolean by remember{mutableStateOf(false)}
     val contentModifier = Modifier
@@ -114,13 +126,32 @@ fun HomeView(navController: NavController, userId: String){
                     )
                 }
                 item {
-                    AppChip(
+                    Chip(
                         modifier = contentModifier,
-                        iconModifier = iconModifier,
-                        chipTitle = "Settings",
-                        chipIcon = Icons.Rounded.Settings,
-                        navController = navController,
-                        destination = "settings"
+                        onClick = {
+                            CoroutineScope(Dispatchers.IO).launch {
+                                store.saveAuthState(false)
+                                store.saveToken("")
+                            }
+                            navController.navigate("Landing")
+                        },
+                        label = {
+                            Text(
+                                text = "Log Out",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        },
+                        icon = {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Rounded.ExitToApp,
+                                contentDescription = "chip icon",
+                                modifier = iconModifier,
+                            )
+                        },
+                        colors = ChipDefaults.chipColors(
+                            backgroundColor = Color.DarkGray,
+                        )
                     )
                 }
             }
