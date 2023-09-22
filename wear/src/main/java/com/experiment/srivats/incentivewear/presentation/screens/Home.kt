@@ -1,7 +1,5 @@
 package com.experiment.srivats.incentivewear.presentation.screens
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,10 +47,7 @@ import androidx.wear.compose.material.Vignette
 import androidx.wear.compose.material.VignettePosition
 import androidx.wear.compose.material.scrollAway
 import com.experiment.srivats.incentivewear.presentation.common.AppChip
-import com.experiment.srivats.incentivewear.presentation.helper.CurrVMFactory
-import com.experiment.srivats.incentivewear.presentation.helper.tasks.TaskModelItem
 import com.experiment.srivats.incentivewear.presentation.helper.user.UserStore
-import com.experiment.srivats.incentivewear.presentation.helper.vm.CurrVM
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

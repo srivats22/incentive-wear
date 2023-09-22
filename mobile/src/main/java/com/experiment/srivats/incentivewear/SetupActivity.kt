@@ -9,6 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.experiment.srivats.incentivewear.ui.theme.IncentiveWearTheme
@@ -49,6 +51,14 @@ fun Greeting(modifier: Modifier = Modifier) {
     val updateMap = hashMapOf(
         "watchUUID" to shortUuid
     )
+    val isWatchUUIDSet = remember { mutableStateOf(false) }
+    val isLoading = remember { mutableStateOf(true) }
+    db.collection("users")
+        .document(auth.currentUser!!.uid)
+        .get()
+        .addOnSuccessListener { result ->
+            println("Result: ${result.data!!["watchUUID"]}")
+        }
     db.collection("users")
         .document(auth.currentUser!!.uid)
         .set(updateMap, SetOptions.merge())

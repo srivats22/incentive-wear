@@ -14,7 +14,6 @@ import androidx.wear.compose.navigation.SwipeDismissableNavHost
 import androidx.wear.compose.navigation.composable
 import androidx.wear.compose.navigation.rememberSwipeDismissableNavController
 import com.experiment.srivats.incentivewear.presentation.helper.user.UserStore
-import com.experiment.srivats.incentivewear.presentation.helper.vm.CurrVM
 import com.experiment.srivats.incentivewear.presentation.screens.CurrTask
 import com.experiment.srivats.incentivewear.presentation.screens.HomeView
 import com.experiment.srivats.incentivewear.presentation.screens.LoginView
@@ -24,7 +23,6 @@ import com.experiment.srivats.incentivewear.presentation.screens.TaskDetails
 import com.experiment.srivats.incentivewear.presentation.theme.IncentiveWearTheme
 
 class MainActivity : ComponentActivity() {
-    private lateinit var viewModel: CurrVM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()

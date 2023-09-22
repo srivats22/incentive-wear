@@ -1,6 +1,5 @@
 package com.experiment.srivats.incentivewear.presentation.screens
 
-import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.border
@@ -21,11 +20,11 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -36,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.wear.compose.material.Button
+import androidx.wear.compose.material.CircularProgressIndicator
 import androidx.wear.compose.material.Icon
 import androidx.wear.compose.material.LocalContentColor
 import androidx.wear.compose.material.Scaffold
@@ -58,6 +58,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 fun LoginView(navController: NavController){
+    var isLoading = remember { mutableStateOf(false) }
     Scaffold(
         timeText = { TimeText() },
         vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
@@ -71,97 +72,97 @@ fun LoginView(navController: NavController){
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Welcome To Incentive")
-            Spacer(modifier = Modifier.height(5.dp))
-            BasicTextField(
-                value = text,
-                textStyle = TextStyle(color = LocalContentColor.current),
-                onValueChange = {
-                    //isReady = it.length>11
-                    text = it
-                },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Done
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        keyboardController?.hide()
-                    }
-                ),
-                decorationBox = { innerTextField ->
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 25.dp, end = 25.dp)
-                            .border(
-                                width = 2.dp,
-                                color = Color(0xFFAAE9E6),
-                                shape = RoundedCornerShape(size = 16.dp)
-                            )
-                            .padding(horizontal = 16.dp, vertical = 12.dp), // inner padding
-                    ) {
-                        if (text.isEmpty()) {
-                            Text(
-                                text = "Enter Code",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Normal,
-                                color = Color.LightGray
-                            )
+            if(isLoading.value){
+                CircularProgressIndicator()
+            }
+            else{
+                Text("Welcome To Incentive")
+                Spacer(modifier = Modifier.height(5.dp))
+                BasicTextField(
+                    value = text,
+                    textStyle = TextStyle(color = LocalContentColor.current),
+                    onValueChange = {
+                        //isReady = it.length>11
+                        text = it
+                    },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
                         }
-                        innerTextField()
+                    ),
+                    decorationBox = { innerTextField ->
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 25.dp, end = 25.dp)
+                                .border(
+                                    width = 2.dp,
+                                    color = Color(0xFFAAE9E6),
+                                    shape = RoundedCornerShape(size = 16.dp)
+                                )
+                                .padding(horizontal = 16.dp, vertical = 12.dp), // inner padding
+                        ) {
+                            if (text.isEmpty()) {
+                                Text(
+                                    text = "Enter Code",
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    color = Color.LightGray
+                                )
+                            }
+                            innerTextField()
+                        }
                     }
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Button(onClick = {
+                    if(text.isEmpty()){
+                        Toast.makeText(context, "Enter Code", Toast.LENGTH_LONG).show()
+                    }
+                    else{
+                        isLoading.value = true
+                        val store = UserStore(context)
+                        val retrofitBuilder = Retrofit.Builder()
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .baseUrl(BASE_URL)
+                            .build()
+                            .create(UserInterface::class.java)
+
+                        val retrofitData = retrofitBuilder.getData(text)
+
+                        retrofitData.enqueue(object : Callback<List<UserDataModelItem>?> {
+                            override fun onResponse(
+                                call: Call<List<UserDataModelItem>?>,
+                                response: Response<List<UserDataModelItem>?>,
+                            ) {
+                                val respBody = response.body()!!
+                                var userUid  = ""
+                                for(rb in respBody){
+                                    userUid = rb.uid
+                                }
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    store.saveAuthState(true)
+                                    store.saveToken(userUid)
+                                }
+                                navController.navigate("Home")
+                            }
+
+                            override fun onFailure(call: Call<List<UserDataModelItem>?>, t: Throwable) {
+                                Toast.makeText(context, "An Error Occurred, Try Again", Toast.LENGTH_LONG).show()
+                                isLoading.value = false
+                                Log.d("Error",t.message.toString())
+                            }
+                        })
+                    }
+                }) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowForward, "continue",
+                        tint = Color.White)
                 }
-            )
-            Spacer(modifier = Modifier.height(5.dp))
-            Button(onClick = { loginCall(context, text, navController) }) {
-                Icon(Icons.AutoMirrored.Filled.ArrowForward, "continue")
             }
         }
     }
 }
-
-fun  loginCall(mContext: Context, passedUUID: String, navController: NavController){
-    val store = UserStore(mContext)
-    if(passedUUID.isEmpty()){
-        Toast.makeText(mContext, "Enter Code", Toast.LENGTH_LONG).show()
-    }
-    val retrofitBuilder = Retrofit.Builder()
-        .addConverterFactory(GsonConverterFactory.create())
-        .baseUrl(BASE_URL)
-        .build()
-        .create(UserInterface::class.java)
-
-    val retrofitData = retrofitBuilder.getData(passedUUID)
-
-    retrofitData.enqueue(object : Callback<List<UserDataModelItem>?> {
-        override fun onResponse(
-            call: Call<List<UserDataModelItem>?>,
-            response: Response<List<UserDataModelItem>?>,
-        ) {
-            val respBody = response.body()!!
-            var userUid  = ""
-            for(rb in respBody){
-                userUid = rb.uid
-            }
-            val sharedPreferences =
-                mContext.applicationContext.getSharedPreferences("isUserLoggedIn", Context.MODE_PRIVATE)
-            val editor = sharedPreferences.edit()
-            editor.putString("isLoggedIn", "loggedIn")
-            editor.putString("userUid", userUid)
-            editor.apply()
-            CoroutineScope(Dispatchers.IO).launch {
-                store.saveAuthState(true)
-                store.saveToken(userUid)
-            }
-            navController.navigate("Home")
-        }
-
-        override fun onFailure(call: Call<List<UserDataModelItem>?>, t: Throwable) {
-            Toast.makeText(mContext, "An Error Occurred, Try Again", Toast.LENGTH_LONG).show()
-            Log.d("Error",t.message.toString())
-        }
-    })
-}
-
-
